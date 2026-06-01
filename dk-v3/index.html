@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>매일국어 초등 홈 Ver 3</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <section class="login-screen" data-login-screen>
+        <button class="login-button" type="button" data-action="login">로그인</button>
+      </section>
+
+      <section class="home-screen" data-home-screen aria-hidden="true">
+        <div class="home-backdrop" aria-hidden="true">
+          <img class="home-backdrop__image" src="./source/home-bg.svg" alt="" />
+        </div>
+        <div class="stage-root" data-stage-root>
+          <div class="camera-window">
+            <div class="home-world" data-home-world aria-hidden="true">
+              <div class="world-bg-layer">
+                <img class="world-bg" src="./source/home-bg.svg" alt="" />
+              </div>
+
+              <div class="world-object-layer">
+                <img class="world-object world-bed" src="./source/bed.svg" alt="" />
+
+                <div class="world-anchor world-anchor--board">
+                  <button class="world-button board-button" type="button" data-action="object" data-target="board">
+                    <img class="world-object world-board" src="./source/board.png" alt="학습 기록 보드" />
+                  </button>
+                  <button class="object-badge object-badge--board" type="button" data-action="object" data-target="board">
+                    <span class="object-badge__surface">
+                      <span class="object-badge__inner">학습 기록</span>
+                      <img class="object-badge__leaf object-badge__leaf--small" src="./source/deco-leaf-2.png" alt="" />
+                    </span>
+                    <img class="object-badge__leaf object-badge__leaf--large" src="./source/deco-leaf-3.png" alt="" />
+                  </button>
+                </div>
+
+                <div class="world-table-scene" data-table-scene aria-hidden="true">
+                  <img class="world-object world-table" src="./source/table.png" alt="" />
+
+                  <div class="world-anchor world-anchor--seedletter">
+                    <button class="world-button seedletter-button" type="button" data-action="object" data-target="seedletter">
+                      <img
+                        class="world-object world-seedletter"
+                        data-seedletter-img
+                        src="./source/seedletter.png"
+                        alt="씨앗글자"
+                      />
+                    </button>
+                    <button class="object-badge object-badge--seedletter" type="button" data-action="object" data-target="seedletter">
+                      <span class="object-badge__surface">
+                        <span class="object-badge__inner">씨앗글자</span>
+                        <img class="object-badge__leaf object-badge__leaf--small" src="./source/deco-leaf-2.png" alt="" />
+                      </span>
+                      <img class="object-badge__leaf object-badge__leaf--large" src="./source/deco-leaf-3.png" alt="" />
+                    </button>
+                  </div>
+
+                <div class="world-anchor world-anchor--achieve" data-achievement-anchor>
+                    <button class="world-button achievebook-button" type="button" data-action="object" data-target="achievebook">
+                      <img class="world-object world-achievebook" src="./source/achievebook.png" alt="업적 책" />
+                    </button>
+                    <button class="object-badge object-badge--achieve" type="button" data-action="object" data-target="achievebook">
+                      <span class="object-badge__surface">
+                        <span class="object-badge__inner">업적</span>
+                        <img class="object-badge__leaf object-badge__leaf--small" src="./source/deco-leaf-2.png" alt="" />
+                      </span>
+                      <img class="object-badge__leaf object-badge__leaf--large" src="./source/deco-leaf-3.png" alt="" />
+                    </button>
+                  </div>
+                </div>
+
+                <div class="world-pino-slot" aria-hidden="true">
+                  <img class="world-object world-pino" data-pino-img src="./source/pino.svg" alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hud-layer" data-hud-layer>
+          <div class="home-hud-dim" aria-hidden="true"></div>
+          <header class="top-ui">
+            <div class="top-info">
+              <section class="panel panel-user">
+                <div class="panel-surface">
+                  <div class="panel-stripes" aria-hidden="true"></div>
+                  <div class="panel-inner">
+                    <div class="bolt-column bolt-column-left" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <div class="bolt-column bolt-column-right" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                    </div>
+
+                    <div class="user-pill">
+                      <i class="fa-solid fa-graduation-cap"></i>
+                      <span>3학년 1학기</span>
+                    </div>
+                    <div class="student-name">김하늘</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="panel panel-crown" data-crown-progress-panel>
+                <div class="panel-surface">
+                  <div class="panel-stripes" aria-hidden="true"></div>
+                  <div class="panel-inner">
+                    <div class="bolt-column bolt-column-left" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <div class="bolt-column bolt-column-right" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                    </div>
+
+                    <div class="panel-label">
+                      <img class="panel-label__icon" src="./source/ico-crown.png" alt="" />
+                      <span class="panel-label__text panel-label__text--single">모은 왕관</span>
+                    </div>
+                    <div class="progress-track" aria-label="왕관 진행률">
+                      <div class="progress-fill" style="width: 44.44%"></div>
+                      <span class="progress-value">32/72</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="top-actions">
+              <button class="icon-button" type="button" data-action="notice">
+                <span class="icon-button__surface">
+                  <span class="icon-button__bolts icon-button__bolts--left" aria-hidden="true"><span></span><span></span></span>
+                  <span class="icon-button__bolts icon-button__bolts--right" aria-hidden="true"><span></span><span></span></span>
+                  <i class="fa-solid fa-bullhorn"></i>
+                </span>
+              </button>
+
+              <button class="icon-button" type="button" data-action="error">
+                <span class="icon-button__surface">
+                  <span class="icon-button__bolts icon-button__bolts--left" aria-hidden="true"><span></span><span></span></span>
+                  <span class="icon-button__bolts icon-button__bolts--right" aria-hidden="true"><span></span><span></span></span>
+                  <i class="fa-solid fa-bell"></i>
+                </span>
+              </button>
+
+              <button class="icon-button" type="button" data-action="sidebar-open" aria-label="메뉴 열기">
+                <span class="icon-button__surface">
+                  <span class="icon-button__bolts icon-button__bolts--left" aria-hidden="true"><span></span><span></span></span>
+                  <span class="icon-button__bolts icon-button__bolts--right" aria-hidden="true"><span></span><span></span></span>
+                  <i class="fa-solid fa-bars"></i>
+                </span>
+              </button>
+            </div>
+          </header>
+
+          <section class="secondary-ui">
+            <div class="notification-bubble" data-acon-notice>
+              <img class="notification-bubble__face" src="./source/acon-face.svg" alt="" />
+              <div class="notification-bubble__talk">
+                <p class="notification-bubble__text">아콘 공지사항 필요할 경우</p>
+                <button class="notification-bubble__link" type="button" data-action="notice-link">이동하기</button>
+              </div>
+            </div>
+
+            <div class="button-links">
+              <button class="button-link button-link--blue" type="button" data-action="link" data-target="submarine" data-event-slot="event1">
+                <span class="button-link__surface">
+                  <span class="button-link__stripes" aria-hidden="true"></span>
+                  <span class="button-link__inner">
+                    <img src="./source/ico-submarine.png" alt="" />
+                    <span>바닷속 도서관</span>
+                  </span>
+                </span>
+              </button>
+
+              <button class="button-link button-link--yellow" type="button" data-action="link" data-target="event" data-event-slot="event2">
+                <span class="button-link__surface">
+                  <span class="button-link__stripes" aria-hidden="true"></span>
+                  <span class="button-link__inner">
+                    <img src="./source/ico-present.png" alt="" />
+                    <span>이벤트 타이틀</span>
+                  </span>
+                </span>
+              </button>
+            </div>
+          </section>
+
+          <button class="cta-button" type="button" data-action="cta">
+            <span class="cta-button__surface">
+              <span class="cta-button__stripes" aria-hidden="true"></span>
+              <span class="cta-button__inner">
+                <span class="cta-button__bolts cta-button__bolts--left" aria-hidden="true"><span></span><span></span></span>
+                <span class="cta-button__label" data-cta-label>학습하러 가기</span>
+                <span class="cta-button__bolts cta-button__bolts--right" aria-hidden="true"><span></span><span></span></span>
+              </span>
+            </span>
+            <img class="cta-button__leaf cta-button__leaf--left" src="./source/deco-leaf-1.png" alt="" />
+            <img class="cta-button__leaf cta-button__leaf--right" src="./source/deco-leaf-3.png" alt="" />
+          </button>
+        </div>
+
+        <div class="license-tooltip" data-license-tooltip aria-hidden="true" hidden>
+          <div class="license-tooltip__body">
+            <p>이용권 등록이 필요합니다.</p>
+            <p>구매하러 가기 →</p>
+          </div>
+          <span class="license-tooltip__arrow" aria-hidden="true"></span>
+        </div>
+
+        <div class="sidebar-layer" data-sidebar-layer aria-hidden="true" hidden>
+          <button class="sidebar-dim" type="button" data-action="sidebar-close" aria-label="사이드바 닫기"></button>
+
+          <aside class="sidebar-panel">
+            <div class="sidebar-panel__shell">
+              <div class="sidebar-panel__surface">
+                <div class="sidebar-panel__inner">
+                  <header class="sidebar-header">
+                    <img class="sidebar-header__leaf" src="./source/deco-leaf-3.png" alt="" />
+                    <div class="sidebar-header__row">
+                      <h2>김하늘</h2>
+                      <button class="sidebar-close" type="button" data-action="sidebar-close" aria-label="닫기">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                    <div class="sidebar-header__meta">
+                      <span class="sidebar-header__term">3학년 1학기</span>
+                      <button class="sidebar-header__badge sidebar-header__badge--button" type="button" data-action="license-tooltip">
+                        이용권 등록 필요
+                      </button>
+                    </div>
+                  </header>
+
+                  <div class="sidebar-groups">
+                    <section class="sidebar-group">
+                      <button class="sidebar-item" type="button" data-action="sidebar-item" data-nav-target="my-info">
+                        <span class="sidebar-item__label"><img src="./source/ico-mypage.png" alt="" />내 정보</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item" data-nav-target="study-record">
+                        <span class="sidebar-item__label"><img src="./source/ico-history.png" alt="" />학습 기록</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item" data-nav-target="report-list">
+                        <span class="sidebar-item__label"><img src="./source/ico-report.png" alt="" />학습 보고서</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item">
+                        <span class="sidebar-item__label"><img src="./source/ico-message.png" alt="" />받은 쪽지함</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </section>
+
+                    <section class="sidebar-group">
+                      <button class="sidebar-item" type="button" data-action="sidebar-item" data-nav-target="notice">
+                        <span class="sidebar-item__label"><img src="./source/ico-notice.png" alt="" />공지사항</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item">
+                        <span class="sidebar-item__label"><img src="./source/ico-error.png" alt="" />오류 신고</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </section>
+
+                    <section class="sidebar-group">
+                      <button class="sidebar-item" type="button" data-action="sidebar-item">
+                        <span class="sidebar-item__label"><img src="./source/ico-app.png" alt="" />홈 화면 추가하기</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item" data-nav-target="settings">
+                        <span class="sidebar-item__label"><img src="./source/ico-setting.png" alt="" />환경 설정</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                      <button class="sidebar-item" type="button" data-action="sidebar-item">
+                        <span class="sidebar-item__label"><img src="./source/ico-logout.png" alt="" />로그아웃</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="preset-layer" data-preset-layer aria-hidden="true" hidden>
+          <button class="preset-dim" type="button" data-action="preset-close" aria-label="모달 닫기"></button>
+          <div class="preset-modal" role="dialog" aria-modal="true" aria-labelledby="preset-title">
+            <button class="preset-modal__close" type="button" data-action="preset-close" aria-label="닫기">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2 id="preset-title">디버그 상태 컨트롤</h2>
+            <div class="debug-panel" data-debug-panel></div>
+          </div>
+        </div>
+
+        <div class="route-loading-layer" data-route-loading aria-hidden="true" hidden>
+          <div class="route-loading-chip">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>학습 공간으로 이동하는 중</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

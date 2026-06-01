@@ -1,0 +1,16 @@
+# Only publish the deployable prototype directories and root deployment files.
+*
+!/.gitignore
+!/README.md
+!/index.html
+!/vercel.json
+!/dk-v3/
+!/dk-v3/**
+!/dk-etc-pages/
+!/dk-etc-pages/**
+
+# Keep local inspection artifacts out of the public repo.
+dk-v3/.home.dom.html
+dk-v3/.map.dom.html
+dk-v3/figma-map.png
+dk-etc-pages/.study-record.dom.html

@@ -1861,16 +1861,9 @@
 
     function renderCurriculumGroup() {
       return `
-        <section class="setting-group">
-          <div class="setting-group__copy">
-            <h2 class="field-title">교육과정 설정</h2>
-            <p class="field-help">이전 교육과정을 이용하던 학생을 위한 확인용 설정입니다.</p>
-          </div>
-          <div class="setting-switch-row">
-            <div class="setting-switch-copy">
-              <strong class="setting-switch-copy__title">2022년 개정 과정 보기</strong>
-              <p class="field-help">2015 개정 교육과정을 이용하던 학생은 2022년 개정 과정을 미리 확인할 수 있어요.</p>
-            </div>
+        <section class="setting-group setting-group--compact-switch">
+          <div class="setting-switch-row setting-switch-row--compact">
+            <strong class="setting-switch-copy__title">2022년 개정 과정 보기</strong>
             <button
               class="setting-switch${state.curriculum2022Enabled ? " is-on" : ""}"
               type="button"

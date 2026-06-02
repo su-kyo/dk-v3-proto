@@ -3,6 +3,7 @@ const modalRoot = document.querySelector("#modal-root");
 
 const MAP_ASSET = "./source/";
 const NODE_ASSET = "./source/node-new/";
+const GUIDE_ASSET = "../dk-etc-pages/source/";
 const DEBUG_ENABLED = new URLSearchParams(window.location.search).get("debug") === "1";
 const GENERAL_PAGE_ROUTES = {
   home: "./index.html?entry=landed",
@@ -167,6 +168,60 @@ const CROWNS = {
   summer: "crown-summer.svg",
 };
 
+const HELP_SEASONS = [
+  { id: "spring", label: "봄" },
+  { id: "summer", label: "여름" },
+  { id: "autumn", label: "가을" },
+  { id: "winter", label: "겨울" },
+];
+
+const HELP_STAR_GUIDE = [
+  { key: "empty", asset: "star_empty.svg", description: "학습 전" },
+  { key: "4", asset: "star_4th.svg", description: "64점 이하" },
+  { key: "3", asset: "star_3rd.svg", description: "65~84점" },
+  { key: "2", asset: "star_2nd.svg", description: "85~99점" },
+  { key: "1", asset: "star_1st.svg", description: "100점" },
+];
+
+const HELP_FLAG_GUIDE = [
+  { level: 5, description: "0~30점" },
+  { level: 4, description: "31~64점" },
+  { level: 3, description: "65~84점" },
+  { level: 2, description: "85~99점" },
+  { level: 1, description: "100점" },
+];
+
+const HELP_FLAG_ASSETS = {
+  spring: {
+    1: "node_spring_1st.svg",
+    2: "node_spring_2nd.svg",
+    3: "node_spring_3rd.svg",
+    4: "node_spring_4th.svg",
+    5: "node_spring_5th.svg",
+  },
+  summer: {
+    1: "node_summer_1st.svg",
+    2: "node_summer_2nd.svg",
+    3: "node_summer_3rd.svg",
+    4: "node_summer_4th.svg",
+    5: "node_summer_5th.svg",
+  },
+  autumn: {
+    1: "node_autumn_1st.svg",
+    2: "node_autumn_2nd.svg",
+    3: "node_autumn_3rd.svg",
+    4: "node_autumn_4th.svg",
+    5: "node_autumn_5th.svg",
+  },
+  winter: {
+    1: "node_winter_1st.svg",
+    2: "node_winter_2nd.svg",
+    3: "node_winter_3rd.svg",
+    4: "node_winter_4th.svg",
+    5: "node_winter_5th.svg",
+  },
+};
+
 const state = {
   chapters: buildChapters(),
   lastLearning: null,
@@ -187,6 +242,7 @@ let routeLoading = null;
 let completionSequence = null;
 let debugPanelOpen = false;
 let curriculumNoticeOpen = true;
+let helpModalState = null;
 
 renderMap();
 applyScale();
@@ -451,6 +507,10 @@ function renderMap() {
     startRouteLoading(GENERAL_PAGE_ROUTES.settings, "학습환경설정으로 이동하는 중");
   });
 
+  app.querySelector("[data-help-open]")?.addEventListener("click", () => {
+    openHelpModal();
+  });
+
   app.querySelector("[data-curriculum-notice-close]")?.addEventListener("click", () => {
     curriculumNoticeOpen = false;
     renderMap();
@@ -662,6 +722,9 @@ function renderTopBar(progress) {
       </div>
 
       <div class="map-semester-stack">
+        <button class="map-help-button" type="button" data-help-open aria-label="점수 기준 안내 열기">
+          <span class="map-help-button__inner" aria-hidden="true">?</span>
+        </button>
         <div class="map-semester-panel">
           <div class="map-semester-panel__surface">
             <div class="map-semester-panel__stripes" aria-hidden="true"></div>
@@ -688,7 +751,7 @@ function renderTopBar(progress) {
           curriculumNoticeOpen
             ? `
               <div class="map-curriculum-notice" role="status" aria-live="polite">
-                <div class="map-curriculum-notice__text">2022년 개정 교육과정 준비중이에요!</div>
+                <div class="map-curriculum-notice__text">2022년 개정 교육과정이 준비됐어요!</div>
                 <button
                   class="map-curriculum-notice__close"
                   type="button"
@@ -838,6 +901,153 @@ function renderLoading() {
       </div>
     </div>
   `;
+}
+
+function renderHelpModalShell() {
+  return `
+    <div class="modal-layer map-help-layer" data-help-layer>
+      <section class="map-help-modal" role="dialog" aria-modal="true" aria-labelledby="map-help-modal-title">
+        <div class="map-help-modal__header">
+          <div class="map-help-modal__copy">
+            <h2 id="map-help-modal-title">점수 기준 안내</h2>
+          </div>
+          <button class="map-help-modal__close" type="button" data-help-close aria-label="닫기">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="map-help-modal__body">
+          <section class="map-help-panel">
+            <div class="map-help-panel__head">
+              <div class="map-help-panel__title-block">
+                <h3>별점 점수 체계</h3>
+                <p>별점은 과목 내 훈련 점수를 나타내요.</p>
+              </div>
+            </div>
+            <div class="map-help-star-list">
+              ${renderHelpStarRows()}
+            </div>
+          </section>
+
+          <section class="map-help-panel">
+            <div class="map-help-panel__head map-help-panel__head--flag">
+              <div class="map-help-panel__title-block">
+                <h3>깃발 점수 체계</h3>
+                <p>깃발은 한 회차의 종합점수를 나타내요.</p>
+              </div>
+              <div class="map-help-season-tabs" role="tablist" aria-label="깃발 계절 선택">
+                ${HELP_SEASONS.map(
+                  (season) => `
+                    <button
+                      class="map-help-season-tab"
+                      type="button"
+                      data-help-season="${season.id}"
+                      role="tab"
+                      aria-selected="false"
+                    >
+                      ${season.label}
+                    </button>
+                  `
+                ).join("")}
+              </div>
+            </div>
+            <div class="map-help-flag-list" data-help-flag-list></div>
+          </section>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderHelpStarRows() {
+  return HELP_STAR_GUIDE.map(
+    (item) => `
+      <div class="map-help-row map-help-row--star">
+        <div class="map-help-row__visual">
+          <img src="${GUIDE_ASSET}${item.asset}" alt="${item.description}" />
+        </div>
+        <span class="map-help-row__score">${item.description}</span>
+      </div>
+    `
+  ).join("");
+}
+
+function renderHelpFlagRows(seasonId) {
+  return HELP_FLAG_GUIDE.map(
+    (item) => `
+      <div class="map-help-row map-help-row--flag">
+        <div class="map-help-row__visual">
+          <img src="${GUIDE_ASSET}${HELP_FLAG_ASSETS[seasonId][item.level]}" alt="${item.description}" />
+        </div>
+        <span class="map-help-row__score">${item.description}</span>
+      </div>
+    `
+  ).join("");
+}
+
+function openHelpModal() {
+  if (helpModalState) return;
+  helpModalState = { season: HELP_SEASONS[0].id };
+  renderHelpModal();
+}
+
+function renderHelpModal() {
+  if (!helpModalState) return;
+
+  if (!modalRoot.querySelector("[data-help-layer]")) {
+    modalRoot.innerHTML = renderHelpModalShell();
+    modalRoot.querySelector("[data-help-layer]")?.addEventListener("click", (event) => {
+      if (event.target.matches("[data-help-layer]")) closeHelpModal();
+    });
+    modalRoot.querySelectorAll("[data-help-close]").forEach((button) => {
+      button.addEventListener("click", closeHelpModal);
+    });
+    modalRoot.querySelectorAll("[data-help-season]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectHelpSeason(button.dataset.helpSeason);
+      });
+    });
+    requestAnimationFrame(() => modalRoot.querySelector("[data-help-layer]")?.classList.add("is-open"));
+  }
+
+  updateHelpModalContent();
+}
+
+function updateHelpModalContent() {
+  if (!helpModalState) return;
+  const selectedSeason = helpModalState.season;
+  const layer = modalRoot.querySelector("[data-help-layer]");
+  if (!layer) return;
+
+  layer.querySelectorAll("[data-help-season]").forEach((button) => {
+    const active = button.dataset.helpSeason === selectedSeason;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+
+  const flagList = layer.querySelector("[data-help-flag-list]");
+  if (flagList) {
+    flagList.innerHTML = renderHelpFlagRows(selectedSeason);
+  }
+}
+
+function selectHelpSeason(seasonId) {
+  if (!seasonId || !HELP_FLAG_ASSETS[seasonId]) return;
+  helpModalState.season = seasonId;
+  updateHelpModalContent();
+}
+
+function closeHelpModal() {
+  if (!helpModalState) return;
+  helpModalState = null;
+  const layer = modalRoot.querySelector("[data-help-layer]");
+  if (!layer) return;
+  layer.classList.remove("is-open");
+  window.setTimeout(() => {
+    if (modalRoot.querySelector("[data-help-layer]")) {
+      modalRoot.innerHTML = "";
+    }
+  }, 240);
 }
 
 function renderModalShell(chapter) {
@@ -1393,6 +1603,10 @@ function bindGlobalEvents() {
     if (event.key !== "Escape") return;
     if (sidebarOpen) {
       setSidebarOpen(false);
+      return;
+    }
+    if (helpModalState) {
+      closeHelpModal();
       return;
     }
     if (activeModal) {

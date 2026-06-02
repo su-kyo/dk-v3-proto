@@ -8,6 +8,7 @@
 
   const pageRoutes = {
     home: "../dk-v3/index.html?entry=landed",
+    map: "../dk-v3/map.html",
     notice: "./notice.html",
     "my-info": "./my-info.html",
     "study-record": "./study-record.html",
@@ -572,6 +573,7 @@
 
   function handleChromeKeydown(event) {
     if (event.key === "Escape" && chromeState.sidebarOpen) {
+      event.preventDefault();
       setSidebarOpen(false);
     }
   }
@@ -1728,10 +1730,14 @@
       readingMode: "소리 모드",
       readingSpeed: "x1.2",
       deviceMode: "권장사양 모드",
+      curriculum2022Enabled: false,
       saveMessage: "",
     };
 
-    const state = loadState();
+    const state = {
+      ...loadState(),
+      escModalOpen: false,
+    };
 
     function loadState() {
       try {
@@ -1756,6 +1762,9 @@
       if (["권장사양 모드", "저사양 모드"].includes(raw.deviceMode)) {
         nextState.deviceMode = raw.deviceMode;
       }
+      if (typeof raw.curriculum2022Enabled === "boolean") {
+        nextState.curriculum2022Enabled = raw.curriculum2022Enabled;
+      }
       return nextState;
     }
 
@@ -1765,6 +1774,7 @@
         readingMode: state.readingMode,
         readingSpeed: state.readingSpeed,
         deviceMode: state.deviceMode,
+        curriculum2022Enabled: state.curriculum2022Enabled,
       };
       try {
         window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(storedState));
@@ -1804,6 +1814,24 @@
       render();
     }
 
+    function toggleCurriculumSwitch() {
+      state.curriculum2022Enabled = !state.curriculum2022Enabled;
+      clearSaveMessage();
+      render();
+    }
+
+    function closeEscModal() {
+      if (!state.escModalOpen) return;
+      state.escModalOpen = false;
+      render();
+    }
+
+    function openEscModal() {
+      if (state.escModalOpen) return;
+      state.escModalOpen = true;
+      render();
+    }
+
     function renderSettingOption(group, value) {
       const isActive = state[group] === value;
       return `
@@ -1831,11 +1859,84 @@
       `;
     }
 
+    function renderCurriculumGroup() {
+      return `
+        <section class="setting-group">
+          <div class="setting-group__copy">
+            <h2 class="field-title">교육과정 설정</h2>
+            <p class="field-help">이전 교육과정을 이용하던 학생을 위한 확인용 설정입니다.</p>
+          </div>
+          <div class="setting-switch-row">
+            <div class="setting-switch-copy">
+              <strong class="setting-switch-copy__title">2022년 개정 과정 보기</strong>
+              <p class="field-help">2015 개정 교육과정을 이용하던 학생은 2022년 개정 과정을 미리 확인할 수 있어요.</p>
+            </div>
+            <button
+              class="setting-switch${state.curriculum2022Enabled ? " is-on" : ""}"
+              type="button"
+              data-setting-toggle="curriculum2022Enabled"
+              aria-pressed="${state.curriculum2022Enabled ? "true" : "false"}"
+              aria-label="2022년 개정 과정 보기"
+            >
+              <span class="setting-switch__thumb" aria-hidden="true"></span>
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderEscModal() {
+      if (!state.escModalOpen) return "";
+      return `
+        <div class="page-modal-layer is-open" data-settings-modal>
+          <button class="page-modal-dim" type="button" data-settings-modal-close aria-label="모달 닫기"></button>
+          <section class="page-modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-esc-modal-title">
+            <div class="page-modal-card__header">
+              <h2 id="settings-esc-modal-title">학습을 종료할까요?</h2>
+              <button class="page-modal-card__close" type="button" data-settings-modal-close aria-label="닫기">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="page-modal-card__body">
+              <p>지금 나가면 현재 화면에서 진행 중인 내용은 저장되지 않을 수 있어요.</p>
+            </div>
+            <div class="page-modal-card__actions">
+              <button class="btn-brown" type="button" data-settings-modal-close>계속 학습하기</button>
+              <button class="btn-orange" type="button" data-settings-modal-leave>나가기</button>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function handleSettingsKeydown(event) {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      if (state.escModalOpen) {
+        event.preventDefault();
+        closeEscModal();
+        return;
+      }
+      event.preventDefault();
+      openEscModal();
+    }
+
+    function bindPageEvents() {
+      if (bindPageEvents.bound) return;
+      document.addEventListener("keydown", handleSettingsKeydown);
+      bindPageEvents.bound = true;
+    }
+
     function bindEvents() {
+      bindPageEvents();
+
       root.querySelectorAll("[data-setting-group]").forEach((button) => {
         button.addEventListener("click", () => {
           setOption(button.dataset.settingGroup, button.dataset.settingValue);
         });
+      });
+
+      root.querySelector("[data-setting-toggle='curriculum2022Enabled']")?.addEventListener("click", () => {
+        toggleCurriculumSwitch();
       });
 
       root.querySelectorAll("[data-font-size]").forEach((button) => {
@@ -1862,6 +1963,14 @@
       if (saveButton) {
         saveButton.addEventListener("click", saveSettings);
       }
+
+      root.querySelectorAll("[data-settings-modal-close]").forEach((button) => {
+        button.addEventListener("click", closeEscModal);
+      });
+
+      root.querySelector("[data-settings-modal-leave]")?.addEventListener("click", () => {
+        navigateTo("map");
+      });
     }
 
     function render() {
@@ -1926,6 +2035,7 @@
           </section>
 
           <section class="form-card setting-card">
+            ${renderCurriculumGroup()}
             ${renderSettingGroup(
               "책읽기 모드",
               "읽어 보기 학습의 두 가지 모드 중 한 가지를 선택해 주세요.",
@@ -1949,9 +2059,11 @@
           <div class="settings-feedback${state.saveMessage ? " is-visible" : ""}">${escapeHtml(state.saveMessage || " ")}</div>
 
           <div class="action-row">
-            <button class="btn-brown" type="button" data-nav-target="home">홈으로</button>
+            <button class="btn-brown" type="button" data-nav-target="map">학습하러가기</button>
             <button class="btn-orange" type="button" data-settings-save>저장하기</button>
           </div>
+
+          ${renderEscModal()}
         </div>
       `;
 

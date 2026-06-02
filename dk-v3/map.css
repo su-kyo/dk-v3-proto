@@ -407,6 +407,15 @@ img {
   justify-content: flex-end;
 }
 
+.map-semester-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  width: 400px;
+}
+
 .map-gear-panel {
   position: absolute;
   top: calc(100% + 12px);
@@ -535,7 +544,7 @@ img {
 
 .map-semester-panel {
   pointer-events: auto;
-  width: 400px;
+  width: 100%;
   padding-bottom: 6px;
   border-radius: 18px;
   background: var(--wood-shadow);
@@ -598,6 +607,11 @@ img {
   line-height: 1.2;
 }
 
+.map-semester-panel__curriculum {
+  color: #8b5b29;
+  font-weight: 800;
+}
+
 .map-semester-panel__progress {
   position: relative;
   width: 100%;
@@ -647,6 +661,60 @@ img {
 
 .map-semester-panel__bolts--left { left: 9px; }
 .map-semester-panel__bolts--right { right: 9px; }
+
+.map-curriculum-notice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 14px 10px 16px;
+  border: 2px solid #ddcdb9;
+  border-radius: 999px;
+  background: #fff9ee;
+  box-shadow: 0 10px 24px rgba(61, 32, 0, 0.12);
+}
+
+.map-curriculum-notice::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid #ddcdb9;
+  border-left: 2px solid #ddcdb9;
+  background: #fff9ee;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.map-curriculum-notice__text {
+  position: relative;
+  z-index: 1;
+  color: #633401;
+  font-family: var(--font-round);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.map-curriculum-notice__close {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #8b5b29;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.map-curriculum-notice__close:hover {
+  background: rgba(139, 91, 41, 0.1);
+  transform: scale(1.04);
+}
 
 .map-seedletter {
   position: fixed;
@@ -1692,6 +1760,10 @@ img {
 @media (max-width: 900px) {
   .map-topbar {
     grid-template-columns: 1fr 360px 1fr;
+  }
+
+  .map-semester-stack {
+    width: 360px;
   }
 
   .map-semester-panel {

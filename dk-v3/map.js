@@ -27,6 +27,7 @@ const DESIGN = {
 const TERM = {
   id: "g3s1",
   label: "3학년 1학기",
+  curriculumYear: "2015",
   type: "high",
   totalChapters: 72,
   subjects: ["kor", "sci"],
@@ -57,7 +58,6 @@ const DEBUG_DEFAULTS = {
   event2Visible: true,
   graduationMode: false,
   subscriptionActive: true,
-  show2022Curriculum: false,
 };
 
 const COMPLETION_TIMING = {
@@ -186,7 +186,7 @@ let sidebarOpen = false;
 let routeLoading = null;
 let completionSequence = null;
 let debugPanelOpen = false;
-let gearPanelOpen = false;
+let curriculumNoticeOpen = true;
 
 renderMap();
 applyScale();
@@ -448,7 +448,11 @@ function renderMap() {
   });
 
   app.querySelector("[data-gear-toggle]")?.addEventListener("click", () => {
-    gearPanelOpen = !gearPanelOpen;
+    startRouteLoading(GENERAL_PAGE_ROUTES.settings, "학습환경설정으로 이동하는 중");
+  });
+
+  app.querySelector("[data-curriculum-notice-close]")?.addEventListener("click", () => {
+    curriculumNoticeOpen = false;
     renderMap();
   });
 
@@ -460,18 +464,6 @@ function renderMap() {
   app.querySelectorAll("[data-debug-key]").forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.debugKey;
-      if (!key || !(key in DEBUG_DEFAULTS)) return;
-      DEBUG_STATE = {
-        ...DEBUG_STATE,
-        [key]: !DEBUG_STATE[key],
-      };
-      persistDebugState();
-      renderMap();
-    });
-  });
-  app.querySelectorAll("[data-gear-key]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const key = button.dataset.gearKey;
       if (!key || !(key in DEBUG_DEFAULTS)) return;
       DEBUG_STATE = {
         ...DEBUG_STATE,
@@ -659,38 +651,56 @@ function renderTopBar(progress) {
           </span>
         </button>
         <div class="map-gear-anchor">
-          <button class="map-icon-button" type="button" data-gear-toggle aria-label="옵션 열기" aria-expanded="${gearPanelOpen ? "true" : "false"}">
+          <button class="map-icon-button" type="button" data-gear-toggle aria-label="환경 설정으로 이동">
             <span class="map-icon-button__surface">
               <span class="map-icon-button__bolts map-icon-button__bolts--left" aria-hidden="true"><span></span><span></span></span>
               <span class="map-icon-button__bolts map-icon-button__bolts--right" aria-hidden="true"><span></span><span></span></span>
               <i class="fa-solid fa-gear"></i>
             </span>
           </button>
-          ${renderGearPanel()}
         </div>
       </div>
 
-      <div class="map-semester-panel">
-        <div class="map-semester-panel__surface">
-          <div class="map-semester-panel__stripes" aria-hidden="true"></div>
-          <div class="map-semester-panel__inner">
-            <button class="map-semester-panel__arrow" type="button" aria-label="이전 학기" disabled>
-              <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <div class="map-semester-panel__body">
-              <div class="map-semester-panel__label">${TERM.label}</div>
-              <div class="map-semester-panel__progress">
-                <div class="map-semester-panel__fill" style="width:${Math.round(progress.value * 100)}%"></div>
-                <span class="map-semester-panel__value">${progress.text}</span>
+      <div class="map-semester-stack">
+        <div class="map-semester-panel">
+          <div class="map-semester-panel__surface">
+            <div class="map-semester-panel__stripes" aria-hidden="true"></div>
+            <div class="map-semester-panel__inner">
+              <button class="map-semester-panel__arrow" type="button" aria-label="이전 학기" disabled>
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <div class="map-semester-panel__body">
+                <div class="map-semester-panel__label">${TERM.label} <span class="map-semester-panel__curriculum">(${TERM.curriculumYear})</span></div>
+                <div class="map-semester-panel__progress">
+                  <div class="map-semester-panel__fill" style="width:${Math.round(progress.value * 100)}%"></div>
+                  <span class="map-semester-panel__value">${progress.text}</span>
+                </div>
               </div>
+              <button class="map-semester-panel__arrow" type="button" aria-label="다음 학기" disabled>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+              <span class="map-semester-panel__bolts map-semester-panel__bolts--left" aria-hidden="true"><span></span><span></span></span>
+              <span class="map-semester-panel__bolts map-semester-panel__bolts--right" aria-hidden="true"><span></span><span></span></span>
             </div>
-            <button class="map-semester-panel__arrow" type="button" aria-label="다음 학기" disabled>
-              <i class="fa-solid fa-chevron-right"></i>
-            </button>
-            <span class="map-semester-panel__bolts map-semester-panel__bolts--left" aria-hidden="true"><span></span><span></span></span>
-            <span class="map-semester-panel__bolts map-semester-panel__bolts--right" aria-hidden="true"><span></span><span></span></span>
           </div>
         </div>
+        ${
+          curriculumNoticeOpen
+            ? `
+              <div class="map-curriculum-notice" role="status" aria-live="polite">
+                <div class="map-curriculum-notice__text">2022년 개정 교육과정 준비중이에요!</div>
+                <button
+                  class="map-curriculum-notice__close"
+                  type="button"
+                  data-curriculum-notice-close
+                  aria-label="교육과정 안내 닫기"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+            `
+            : ""
+        }
       </div>
 
       <div class="map-topbar__actions map-topbar__actions--right">
@@ -717,7 +727,7 @@ function renderSidebar() {
               <div class="map-sidebar-head">
                 <img class="map-sidebar-head__leaf" src="${MAP_ASSET}deco-leaf-3.png" alt="" />
                 <div class="map-sidebar-head__row">
-                  <h2>김하늘</h2>
+                  <h2>홍길동</h2>
                   <button class="map-sidebar-close" type="button" data-sidebar-close aria-label="닫기">
                     <i class="fa-solid fa-xmark"></i>
                   </button>
@@ -778,28 +788,6 @@ function renderDebugPanel() {
           </section>
         </div>
       </section>
-    </div>
-  `;
-}
-
-function renderGearPanel() {
-  return `
-    <div class="map-gear-panel${gearPanelOpen ? " is-open" : ""}" data-gear-panel aria-hidden="${gearPanelOpen ? "false" : "true"}">
-      <div class="map-gear-panel__surface">
-        <div class="map-gear-panel__title">옵션</div>
-        <div class="debug-panel__row debug-panel__row--compact">
-          <div class="debug-panel__label">
-            <strong class="debug-panel__name">2022년 개정 과정 보기</strong>
-            <span class="debug-panel__hint">map 검토용 토글</span>
-          </div>
-          <button
-            class="debug-toggle ${DEBUG_STATE.show2022Curriculum ? "is-on" : ""}"
-            type="button"
-            data-gear-key="show2022Curriculum"
-            aria-pressed="${DEBUG_STATE.show2022Curriculum ? "true" : "false"}"
-          >${DEBUG_STATE.show2022Curriculum ? "ON" : "OFF"}</button>
-        </div>
-      </div>
     </div>
   `;
 }
@@ -1376,7 +1364,6 @@ function attachDrag(scrollEl) {
 
 function setSidebarOpen(isOpen) {
   if (completionSequence) return;
-  if (isOpen) gearPanelOpen = false;
   sidebarOpen = isOpen;
   const layer = app.querySelector(".map-sidebar-layer");
   if (!layer) return;
@@ -1386,7 +1373,6 @@ function setSidebarOpen(isOpen) {
 
 function setDebugPanelOpen(isOpen) {
   if (completionSequence) return;
-  if (isOpen) gearPanelOpen = false;
   debugPanelOpen = isOpen;
   renderMap();
 }
@@ -1413,11 +1399,6 @@ function bindGlobalEvents() {
       closeModal();
       return;
     }
-    if (gearPanelOpen) {
-      gearPanelOpen = false;
-      renderMap();
-      return;
-    }
     if (debugPanelOpen) {
       setDebugPanelOpen(false);
       return;
@@ -1432,13 +1413,6 @@ function bindGlobalEvents() {
     if (event.key !== DEBUG_STORAGE_KEY) return;
     DEBUG_STATE = loadDebugState();
     if (!learningSession) renderMap();
-  });
-
-  window.addEventListener("click", (event) => {
-    if (!gearPanelOpen) return;
-    if (event.target.closest("[data-gear-toggle], [data-gear-panel]")) return;
-    gearPanelOpen = false;
-    renderMap();
   });
 
   window.addEventListener("resize", () => {
